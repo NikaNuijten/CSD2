@@ -1,6 +1,7 @@
 import simpleaudio as sa
 import time
 
+sampleBiem = sa.WaveObject.from_wave_file("audioFiles/BIEM.wav")
 bpm=120
 
 replays = (int(input("Amount of replays:")))+1
@@ -8,8 +9,6 @@ replays = (int(input("Amount of replays:")))+1
 notelist = input("Insert note durations (use ,):")
 playbackTimes = [float(x) for x in notelist.split(",")] # converts string to separate floats
 numPlaybackTimes = len(playbackTimes) # len = length/size/oid
-
-sampleBiem = sa.WaveObject.from_wave_file("audioFiles/BIEM.wav")
 
 print()
 
