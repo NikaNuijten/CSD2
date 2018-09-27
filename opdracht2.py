@@ -1,24 +1,27 @@
 import simpleaudio as sa
 import time
 
+bpm=120
+
+replays = (int(input("Amount of replays:")))+1
+
+notelist = input("Insert note durations (use ,):")
+playbackTimes = [float(x) for x in notelist.split(",")] # converts string to separate floats
+numPlaybackTimes = len(playbackTimes) # len = length/size/oid
+
 sampleBiem = sa.WaveObject.from_wave_file("audioFiles/BIEM.wav")
 
-bpm = 120
-playbackTimes = [4, 1, 0.5, 1, 1.5]
-numPlaybackTimes = len(playbackTimes) #len = length/size/oid
+print()
 
-print("Bpm =", bpm)
-
-#play loop "times" times
-times = 4
+# play loop "times" times
+times = replays
 while(times>0):
-    print()
     times -= 1
-    #print values to controll with a time delay
+    # print values to controll with a time delay
     for foo in playbackTimes:
         print("BIEM")
         sampleBiemPlay = sampleBiem.play()
         time.sleep(foo/(bpm/60))
-    #time.sleep(1)
     print()
+time.sleep(1)
 print("Done")
