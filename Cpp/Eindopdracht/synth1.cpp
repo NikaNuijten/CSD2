@@ -1,7 +1,8 @@
 #include "synth1.h"
 
-Synth1::Synth1(Oscillator *oscillator){
+Synth1::Synth1(Oscillator *oscillator, Oscillator *oscillator2){
   this->oscillator = oscillator;
+  this->oscillator2 = oscillator2;
 }
 
 Synth1::~Synth1(){
@@ -14,16 +15,20 @@ double Synth1::midiToFrequency(int midinote){
 void Synth1::noteOn(int midinote, double amplitude, double duration){
   oscillator->setFrequency(midiToFrequency(midinote));
   oscillator->setAmplitude(amplitude);
+  oscillator2->setFrequency(midiToFrequency(midinote));
+  oscillator2->setAmplitude(amplitude);
   this->duration = duration;
   noteOffThread = new std::thread( [=] { noteOffThreadCallable(); } );
 }
 
 void Synth1::noteOff(){
   oscillator->setAmplitude(0.0);
+  oscillator2->setAmplitude(0.0);
 }
 
-void Synth1::setOscillator(Oscillator *oscillator){
+void Synth1::setOscillator(Oscillator *oscillator, Oscillator *oscillator2){
   this->oscillator = oscillator;
+  this->oscillator2 = oscillator2;
 }
 
 void Synth1::noteOffThreadCallable(){

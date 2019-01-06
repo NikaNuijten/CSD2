@@ -8,14 +8,6 @@
 #include "synth1.h"
 #include "melodyGenerator.h"
 
-/*
- * NOTE: jack2 needs to be installed
- * jackd invokes the JACK audio server daemon
- * https://github.com/jackaudio/jackaudio.github.com/wiki/jackd(1)
- * on mac, you can start the jack audio server daemon in the terminal:
- * jackd -d coreaudio
- */
-
 #define PI_2 6.28318530717959
 
 int main(int argc,char **argv)
@@ -41,25 +33,32 @@ int main(int argc,char **argv)
   double samplerate = jack.getSamplerate();
   //int frequencies = myMelody.frequencies;
 
-  // create sine wave
+  // create waves
   Sine sine(samplerate, 262);
   Saw saw(samplerate, 262);
   Square square(samplerate, 262);
 
+  Sine sine2(samplerate, 262);
+  Saw saw2(samplerate, 262);
+  Square square2(samplerate, 262);
+
   Oscillator* oscillator = &sine;
+  Oscillator* oscillator2 = &sine;
 
   oscillator->setAmplitude(0.00);
-  Synth1 synth1(oscillator);
+  oscillator2->setAmplitude(0.00);
+  Synth1 synth1(oscillator, oscillator2);
 
   //assign a function to the JackModule::onProces
-  jack.onProcess = [&oscillator](jack_default_audio_sample_t *inBuf,
+  jack.onProcess = [&oscillator, &oscillator2](jack_default_audio_sample_t *inBuf,
      jack_default_audio_sample_t *outBuf, jack_nframes_t nframes) {
 
     for(unsigned int i = 0; i < nframes; i++) {
       // write oscillator output * amplitude --> to output buffer
-      outBuf[i] = oscillator->getSample();
+      outBuf[i] = oscillator->getSample() + oscillator2->getSample();
       // calculate next sample
       oscillator->tick();
+      oscillator2->tick();
     }
 
     return 0;
@@ -84,19 +83,22 @@ int main(int argc,char **argv)
       case '1':
         //point oscillator to sine
         oscillator = &sine;
-        synth1.setOscillator(oscillator);
+        oscillator2 = &saw2;
+        synth1.setOscillator(oscillator, oscillator2);
         break;
 
       case '2':
         //point oscillator to saw
         oscillator = &saw;
-        synth1.setOscillator(oscillator);
+        oscillator2 = &square2;
+        synth1.setOscillator(oscillator, oscillator2);
         break;
 
       case '3':
         //point oscillator to square
         oscillator = &square;
-        synth1.setOscillator(oscillator);
+        oscillator2 = &sine2;
+        synth1.setOscillator(oscillator, oscillator2);
         break;
 
       case 'a':
