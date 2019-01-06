@@ -16,9 +16,7 @@ int Melody::getNote()
 {
 
   // check if melody is empty
-  //std::cout << "\n writeIndex: " << writeIndex << " readIndex: " << readIndex << std::endl;
   if(readIndex == writeIndex) { //empty
-    //std::cout << "Melody is empty" << std::endl;
     return -1;
   }
   // return current note and then increase readIndex
@@ -33,16 +31,10 @@ void Melody::addNote(int note)
 {
   // check if circular buffer is full or not
   if((writeIndex + 1)%NUM_NOTES == readIndex) { // full
-    //std::cout << "\nMelody::addNote - "
-    //  << "Melody is full, not possible to add a note!" << std::endl;
-  } else { // not full
-    // check if note is not a negative value
+  } else {
     if(note >= 0) {
-      // add note and increase writeIndex
       notes[writeIndex++] = note;
     } else { // negative value
-      //std::cout << "\nMelody::addNote - "
-        //<< "does not accept negative notes!" << std::endl;
     }
   }
   // wrap writeIndex

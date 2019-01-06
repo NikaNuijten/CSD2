@@ -24,8 +24,6 @@ public:
   void setAmplitude(double amplitude);
   double getAmplitude();
 
-  //NOTE - do we need a setter for phase? for now -> not using one
-
 protected:
   virtual void calculate();
   double samplerate;

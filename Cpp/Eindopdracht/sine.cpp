@@ -3,16 +3,10 @@
 
 // Constructor and destructor
 Sine::Sine(double samplerate, double frequency) :
-  Oscillator(samplerate, frequency)
-{
-  //std::cout << "\nInside Sine::oscillator (double frequency, double phase)"
-  //  << "\nfrequency: " << frequency
-  //  << "\nphase: " << phase;
+  Oscillator(samplerate, frequency){
 }
 
-Sine::~Sine()
-{
-  //std::cout << "\nInside Sine::~Sine";
+Sine::~Sine(){
 }
 
 

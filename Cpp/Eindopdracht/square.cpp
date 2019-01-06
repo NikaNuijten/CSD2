@@ -3,16 +3,10 @@
 
 // Constructor and destructor
 Square::Square(double samplerate, double frequency) :
-  Oscillator(samplerate, frequency)
-{
-  //std::cout << "\nInside Square::oscillator (double frequency, double phase)"
-  //  << "\nfrequency: " << frequency
-  //  << "\nphase: " << phase;
+  Oscillator(samplerate, frequency){
 }
 
-Square::~Square()
-{
-  //std::cout << "\nInside Square::~Square";
+Square::~Square(){
 }
 
 

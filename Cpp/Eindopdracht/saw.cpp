@@ -3,16 +3,10 @@
 
 // Constructor and destructor
 Saw::Saw(double samplerate, double frequency) :
-  Oscillator(samplerate, frequency)
-{
-  //std::cout << "\nInside Saw::oscillator (double frequency, double phase)"
-  //  << "\nfrequency: " << frequency
-  //  << "\nphase: " << phase;
+  Oscillator(samplerate, frequency){
 }
 
-Saw::~Saw()
-{
-  //std::cout << "\nInside Saw::~Saw";
+Saw::~Saw(){
 }
 
 

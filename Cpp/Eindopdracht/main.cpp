@@ -23,15 +23,12 @@ int main(int argc,char **argv)
     std::cout << value << "\n";
   }
 
-  //std::cout << melody2.getNote() << "\n";
-
   // create a JackModule instance
   JackModule jack;
 
   // init the jack, use program name as JACK client name
   jack.init(argv[0]);
   double samplerate = jack.getSamplerate();
-  //int frequencies = myMelody.frequencies;
 
   // create waves
   Sine sine(samplerate, 262);
@@ -49,7 +46,7 @@ int main(int argc,char **argv)
   oscillator2->setAmplitude(0.00);
   Synth1 synth1(oscillator, oscillator2);
 
-  //assign a function to the JackModule::onProces
+  // assign a function to the JackModule::onProces
   jack.onProcess = [&oscillator, &oscillator2](jack_default_audio_sample_t *inBuf,
      jack_default_audio_sample_t *outBuf, jack_nframes_t nframes) {
 
@@ -77,7 +74,6 @@ int main(int argc,char **argv)
         running = false;
         jack.end();
         //delete oscillator;
-        //oscillator = nullptr;
         break;
 
       case '1':
