@@ -15,6 +15,7 @@ public:
   void noteOn(int midinote, double amplitude, double duration);
   void noteOff();
   void setOscillator(Oscillator *oscillator, Oscillator *oscillator2);
+
 private:
   Oscillator *oscillator;
   Oscillator *oscillator2;

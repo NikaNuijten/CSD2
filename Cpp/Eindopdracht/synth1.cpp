@@ -21,7 +21,7 @@ void Synth1::noteOn(int midinote, double amplitude, double duration){
   oscillator2->setFrequency(midiToFrequency(midinote));
   oscillator2->setAmplitude(amplitude);
   this->duration = duration;
-  noteOffThread = new std::thread( [=] { noteOffThreadCallable(); } );
+  noteOffThread = new std::thread( [=] { noteOffThreadCallable(); } ); //create new thread
 }
 //noteOff
 void Synth1::noteOff(){
@@ -39,6 +39,6 @@ void Synth1::noteOffThreadCallable(){
   using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
   using std::chrono::system_clock;
 
-  sleep_for(duration*(1ms));
+  sleep_for(duration*(1ms)); // wait for "duration" ms
   noteOff();
 }

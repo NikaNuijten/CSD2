@@ -9,4 +9,4 @@ example: $(SOURCE)
 .cpp.o:
 	$(CXX) -c $(CXXFLAGS) $<
 clean:
-	rm -f example *.o
+	rm -f example *.o *.h.gch
