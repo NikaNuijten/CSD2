@@ -20,7 +20,6 @@ int main(int argc,char **argv)
     // write random melody
     int value = melodyGenerator.rand_between(60,73);
     melody2.addNote(value);
-    std::cout << value << "\n";
   }
 
   // create a JackModule instance
@@ -64,10 +63,11 @@ int main(int argc,char **argv)
   jack.autoConnect();
 
   //keep the program running and listen for user input, q = quit
-  std::cout << "\n\nPress 'q' when you want to quit the program.\nPress '1' for sine, '2' for saw, '3' for square.\n";
+  std::cout << "\nPress 'q' when you want to quit the program.\n\nPress '1' for sine, '2' for saw + square, '3' for square + sine.\n\nPress 'p' to hear a randomly generated melody\n\n";
   bool running = true;
   while (running)
   {
+    std::system("stty raw");
     switch (std::cin.get())
     {
       case 'q':
@@ -79,7 +79,7 @@ int main(int argc,char **argv)
       case '1':
         //point oscillator to sine
         oscillator = &sine;
-        oscillator2 = &saw2;
+        oscillator2 = &sine2;
         synth1.setOscillator(oscillator, oscillator2);
         break;
 
@@ -156,10 +156,10 @@ int main(int argc,char **argv)
       case 'p':
         // play melody2
         int note = melody2.getNote();
-        std::cout << note << "\n";
         synth1.noteOn(note, 0.05, 500.);
         break;
     }
+    std::system("stty cooked");
   }
 
   //end the program
