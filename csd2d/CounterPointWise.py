@@ -8,6 +8,7 @@ import random
 import midiutil
 from midiutil import MIDIFile
 import inquirer
+import re
 
 #----------------------------------------Variables---------------------------------------------#
 
@@ -17,6 +18,8 @@ instrument2 = 1
 instrument3 = 1
 
 inputMelody = []
+melody      = []
+splittedMelody = []
 
 layerAmount = 0
 octaveRange = 1
@@ -27,10 +30,26 @@ bpmDef      = 100
 layer1      = []
 layer2      = []
 
+NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+OCTAVES = list(range(11))
+NOTES_IN_OCTAVE = len(NOTES)
+
 #----------------------------------------Functions---------------------------------------------#
 
 # Contrapuntinator
     # MelodyTransform
+
+def note_to_number(note: str, octave: int) -> int:
+    assert note in NOTES, errors['notes']
+    assert octave in OCTAVES, errors['notes']
+
+    note = NOTES.index(note)
+    note += (NOTES_IN_OCTAVE * octave)
+
+    assert 0 <= note <= 127, errors['notes']
+
+    return note
+
 
 #----------------------------------------User-input--------------------------------------------#
 # Tempo select
@@ -53,9 +72,26 @@ def askBPM():
 def selInstrument1():
     instrument1 = input("Insert midi channel: ") #TODO: errors
     return instrument1
+
 # Step size select
+def selStepSize():
+    stepSize = input("Maximum step size: ") #TODO: errors
+    return stepSize
 
 # Melody input
+def melodyInput():
+    inputMelody.extend(input("Type your melody here: ").split(' '))
+    for element in inputMelody:
+        melody.append([element])
+    for list in melody:
+        for note in list:
+            for value in note:
+                try:
+                    duration = int(value)
+                except:
+                    note = value
+        splittedMelody.append([note_to_number(note, 5), duration, 120])
+    return splittedMelody
 
 # Length select
 
@@ -66,3 +102,7 @@ bpm = askBPM()
 print(bpm)
 instrument1 = selInstrument1()
 print(instrument1)
+stepSize = selStepSize()
+print(stepSize)
+splittedMelody = melodyInput()
+print(splittedMelody)
