@@ -87,7 +87,6 @@ def melodyTransform(length):
 
 # ContrapuntInator
 
-
 # Other
 def note_to_number(note: str, octave: int) -> int:
 
@@ -139,7 +138,7 @@ def selStepSize():
 def melodyInput():
     inputFalse = True
     while True:
-        inputMelody.extend(input("Type your melody here: ").split(' '))
+        inputMelody.extend(input("Type your melody here:\n").split(' '))
         try:
             for element in inputMelody:
                 melody.append([element])
@@ -156,7 +155,7 @@ def melodyInput():
             inputMelody.clear()
             melody.clear()
             splittedMelody.clear()
-            print("ERROR: Incorrect input")
+            print("ERROR: Incorrect input\n")
     melodyInput = splittedMelody
     return melodyInput
 
@@ -238,9 +237,9 @@ print("Okay, time to type your melody!\n")
 
 melodyInput = melodyInput()
 
-print("\nTransforming...")
+print("\nTransforming...\n")
 layer1 = melodyTransform(length)
 time.sleep(2)
-print("\nCounterPointing...")
+print("CounterPointing...\n")
 #call ContrapuntInator
 time.sleep(2)
