@@ -1,7 +1,7 @@
 import random
 
 inputMelody = [[1, 1, 120], [2, 2, 120], [3, 3, 120], [4, 4, 120]]
-layer1 = inputMelody.copy()
+layer1 = []
 function = []
 inputPitches = []
 inputDurations = []
@@ -28,6 +28,7 @@ def transform(list):
     return newList
 
 def melodyTransform():
+    layer1 = inputMelody.copy()
     for note in inputMelody:
         inputPitches.append(note[0])
         inputDurations.append(note[1])
@@ -47,7 +48,7 @@ def melodyTransform():
 
 
 #melodyTransform()
-melodyTransform()
+layer1 = melodyTransform()
 print(layer1)
 
 
