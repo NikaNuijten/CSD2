@@ -118,15 +118,14 @@ def selLength():
     lengthFalse = True
     while True:
         try:
-            length = int(input("Length in seconds (min 10 seconds): "))
-            if (length >= 10):
+            length = int(input("Length in notes (min 8 notes): "))
+            if (length >= 8):
                 break
             else:
                 print("False input: input must be an integer (min 10 seconds)")
         except ValueError:
             print("False input: input must be an integer (min 10 seconds)")
     return length
-
 
 # Octave range select
 
