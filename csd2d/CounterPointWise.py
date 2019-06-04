@@ -1,6 +1,6 @@
 #----------------------------------------Info--------------------------------------------------#
 '''
-
+For this program you need to install music21 and musescore version 2.3.2
 '''
 #----------------------------------------Imports-----------------------------------------------#
 import simpleaudio as sa
@@ -11,6 +11,7 @@ import inquirer
 import re
 import time
 import os
+import music21 as m21
 
 #----------------------------------------Variables---------------------------------------------#
 
@@ -25,11 +26,17 @@ splittedMelody  = []
 melodyInput     = []
 layer1          = []
 layer2          = []
+layerOne        = []
+layerOneCopy    = []
+layer01         = []
 function        = []
 inputPitches    = []
 inputDurations  = []
 newPitches      = []
 newDurations    = []
+durations       = []
+durations2      = []
+options         = []
 
 layerAmount     = 0
 octaveRange     = 1
@@ -64,8 +71,16 @@ def transform(list): # Chooses a transform function an transforms list once
         newList = invertTransform(list)
     return newList
 
+def getMaxStepsize():
+    maxStepsize = 0
+    stepsize = 0
+    for i in range(len(newPitches)-1):
+        stepsize = (abs(newPitches[i] - newPitches[i+1]))
+        if (stepsize > maxStepsize):
+            maxStepsize = stepsize
+    return maxStepsize
+
 def melodyTransform(length):
-    layer1 = melodyInput.copy() # Start first layer with user inputted melody
     for note in melodyInput: # Seperate notes and durations from melody
         inputPitches.append(note[0])
         inputDurations.append(note[1])
@@ -80,12 +95,183 @@ def melodyTransform(length):
         for duration in inputDurations:
             newDurations.append(duration)
         repeat -= 1 # Repeat until it reaches the inputted length
+    while True:
+        maxStepsize = getMaxStepsize()
+        if (maxStepsize > 2):
+            for i in range(len(newPitches)):
+                if (abs(newPitches[i] - newPitches[i+1]) > 2):
+                    newPitches.insert((i+1),(int(newPitches[i] + ((newPitches[i+1] - newPitches[i])/2))))
+        else:
+            break
     # Combine old and new pitches and durations to form melody
-    for i in range(0, length-len(inputPitches)):
+    for i in range(0, length):
         layer1.append([newPitches[i], newDurations[i], 120])
     return layer1
 
 # ContrapuntInator
+def getLastNote():
+    global lastNote
+    lastNote = layerOne[0]
+    return lastNote
+
+def parallel():
+    global verschil
+    layerTwo.append(layerOne[0] + verschil)
+    getLastNote()
+    layerOne.pop(0)
+    return lastNote
+
+def tegenbeweging():
+    global verschil
+    layerTwo.append(layerOne[0] - verschil)
+    getLastNote()
+    layerOne.pop(0)
+    return lastNote
+
+def zijdelings():
+    layerTwo.append(layerOne[0])
+    getLastNote()
+    layerOne.pop(0)
+    return lastNote
+
+def zijdelings2():
+    layerTwo.append(layerOne[0] + random.choice([2, -2]))
+    getLastNote()
+    layerOne.pop(0)
+    return lastNote
+
+def einde():
+    afstand = abs(layerTwo[-1] - layerOne[-1])
+    if (afstand != 3 or afstand != 4):
+        if (afstand > 4):
+            layerOne.append(layerOne[0])
+            layerOneCopy.append(layerOne[0])
+            layer1.append(layerOne[0])
+            layerTwo.append(layerTwo[-1] + random.choice([1, 2]))
+            einde()
+        elif (afstand < 3):
+            layerOne.append(layerOne[0])
+            layerOneCopy.append(layerOne[0])
+            layer1.append(layerOne[0])
+            layerTwo.append(layerTwo[-1] - random.choice([1, 2]))
+            einde()
+        elif (afstand == 3):
+            layerTwo.append(layerTwo[-1] + 1)
+            layerOne.append(layerOne[0] - 2)
+            layerOneCopy.append(layerOne[0] - 2)
+            layer1.append(layerOne[0] - 2)
+            return layerOne, layerTwo
+        else:
+            layerTwo.append(layerTwo[-1] + 2)
+            layerOne.append(layerOne[0] - 2)
+            layerOneCopy.append(layerOne[0] - 2)
+            layer1.append(layerOne[0] - 2)
+            return layerOne, layerTwo
+
+def layer01Maker():
+    for duration in layer2:
+        durations.append(duration[1])
+    for note in layerOneCopy:
+        try:
+            duration = float(durations[0])
+            durations.pop(0)
+        except:
+            duration = 4
+        layer01.append([note, duration, 120])
+
+    return layer01
+
+def layer2Maker():
+    options.extend([1, 2, 4, 8])
+    for note in layerTwo:
+        durations2.append(random.choice(options))
+        try:
+            duration = float(durations[0])
+            durations.pop(0)
+        except:
+            duration = durations2[-1]
+        layer2.append([note, duration, 120])
+    durations2.clear()
+    options.clear()
+    return layer2
+
+def create_notes(input_notes):
+    """
+    <Copied from Ciska>
+    Transforms a list of notes to m21 notes.
+
+    Parameters:
+    input_notes - a list of notes, each note defined as a list:
+                  [pitch, quarter_note_length, velocity]
+
+    Returns:
+    A list of m21 notes.
+    """
+    notes =[]                       # instantiate new list
+    for n in input_notes:
+        note = m21.note.Note()      # create m21 note
+        # to work with midi note values --> create a pitch object with
+        # midi parameter and assign this pitch object to note.pitch
+        note.pitch = m21.pitch.Pitch(midi=n[0])
+        note.quarterLength=n[1]     # set notelength and velocity
+        note.volume.velocity = n[2]
+        notes.append(note)          # add note to m21 notes list
+    return notes
+
+def notes_to_stream(notes):
+    """
+    <Copied from Ciska>
+    Creates a m21 stream adds the m21 notes in the passed list and returns the
+    stream.
+
+    Parameters:
+    notes: - A list of m21 notes.
+
+    Returns:
+    A m21 stream.
+    """
+    clef = m21.clef.TrebleClef()    # instantiate treble clef
+    stream = m21.stream.Stream()    # instantiate stream
+    stream.clef = clef
+    stream.append(notes)            # add notes
+    return stream
+
+def contrapuntInator():
+    global lastNote
+    global verschil
+    verschil = (layerOne[1] - layerOne[0])
+    interval = abs(layerTwo[0] - lastNote)
+    if ( interval == 3 or interval == 4 or interval == 8 or interval == 9): #tertsen en sexten
+        options.extend([0, 1, 2]) # 0 = zijdelings, 1 = tegenbeweging 2 = parallel
+        choice = random.choice(options)
+        options.clear()
+        if (choice == 0):
+            lastNote = parallel()
+        elif (choice == 1):
+            lastNote = tegenbeweging()
+        else:
+            lastNote = zijdelings()
+    elif (interval == 5 or interval == 7):  #reine kwart en kwint
+        options.extend([0, 1])
+        choice = random.choice(options)
+        options.clear()
+        if (choice == 0):
+            lastNote = tegenbeweging()
+        else:
+            lastNote = zijdelings()
+    elif (interval == 0 or interval == 12): #prime en octaaf
+        lastNote = tegenbeweging()
+    elif (verschil == 0):   #reine prime
+        lastNote = zijdelings2()
+    else:                   #overige intervallen
+        lastNote = zijdelings()
+    if (len(layerOne) > 1):
+        contrapuntInator()
+    else:
+        #TODO: cadens met tegenbeweging
+        time.sleep(1)
+        print("Here it is:")
+        einde()
 
 # Other
 def note_to_number(note: str, octave: int) -> int:
@@ -146,7 +332,8 @@ def melodyInput():
                 for note in list:
                     for value in note:
                         try:
-                            duration = int(value)
+                            durationvalue = float(value)
+                            duration = (4/durationvalue)
                         except:
                             note = value
                 splittedMelody.append([note_to_number(note, 5), duration, 120])
@@ -231,7 +418,7 @@ print("For sharps, use lowercase.\nFor example: c2 \nThis will give you a half n
 time.sleep(6)
 print("Separate the notes with a single spacebar.\n")
 time.sleep(3)
-print("Example: D8 C4 E8 d2 E8 F4\n")
+print("Example: D8 C4 E8 F4 g8\n")
 time.sleep(4)
 print("****************\n")
 print("Okay, time to type your melody!\n")
@@ -242,5 +429,28 @@ print("\nTransforming...\n")
 layer1 = melodyTransform(length)
 time.sleep(2)
 print("CounterPointing...\n")
-#call ContrapuntInator
+
+for note in layer1:
+    layerOne.append(note[0]) #alle midinootwaardes in een array
+    layerOneCopy.append(note[0])
+for duration in layer1:
+    durations.append(duration[1]) #alle durations in een array
+
+layerTwo = [(layerOne[0])] #eerste noot van layertwo is eerste noot van layerOne
+verschil = 0;
+lastNote = getLastNote()
+contrapuntInator()
+layer2Maker()
+layer01Maker()
+notes = create_notes(layer2)
+stream = notes_to_stream(notes)
+stream2 = m21.stream.Stream()
+stream2.append(stream)
+notes.clear()
+notes = create_notes(layer01)
+stream = notes_to_stream(notes)
+s = m21.stream.Stream()
+s.insert(0.0, stream)
+s.insert(0.0, stream2)
+s.show()
 time.sleep(2)
